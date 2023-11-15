@@ -169,8 +169,7 @@ public class UIAllSample : MonoBehaviour
     bool loop = true;
 
     IEnumerator CoroutineName(int val /*필요하다면 매개변수 가능*/)
-    {
-        int i = 0;
+    {        
         while (loop)
         {
             Debug.Log("코루틴 불림");

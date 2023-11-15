@@ -28,7 +28,7 @@ public class PokemonGameManager : MonoBehaviour
     bool mytern = true;
     bool IsInputable = false;
         
-    string[] name = new string[3] { "파이리", "이상해씨", "꼬부기" };
+    string[] nameArr = new string[3] { "파이리", "이상해씨", "꼬부기" };
     
     int skillnum = 0;
 
@@ -59,7 +59,7 @@ public class PokemonGameManager : MonoBehaviour
         startPanel.SetActive(true);
         for (int i = 0; i < TypeSelect.Length; i++)
         {
-            TypeSelect[i].transform.GetChild(1).GetComponent<Text>().text = name[i];
+            TypeSelect[i].transform.GetChild(1).GetComponent<Text>().text = nameArr[i];
             TypeSelect[i].isOn = false;
         }        
     }
@@ -135,13 +135,13 @@ public class PokemonGameManager : MonoBehaviour
         }
         
         MyPokemon.CreatePokemon(false, selectnum,
-            name[selectnum], hp, att, new float[2] { 1.5f, 2f });
+            nameArr[selectnum], hp, att, new float[2] { 1.5f, 2f });
 
         int enemytype = Random.Range(0, (int)AllEnum.PokeType.END);
         EnemyPokemon.gameObject.SetActive(true);
 
         EnemyPokemon.CreatePokemon(true,enemytype,
-            name[enemytype],
+            nameArr[enemytype],
             Random.Range(1, hp), Random.Range(1, att), new float[1] { Random.Range(15, 21) * 0.1f } );
         
         gamePanel.SetActive(true);

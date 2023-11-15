@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        scoreText.text = "";
         //먼저 오브젝트 풀에 내가 쓸 최대 객체들을 만들어둘것임...
         //젤리 하나가 태어나서 땅에 떨어져 죽을떄까지
         //한화면에 최대 20개의 젤리는 안넘을것같다. 라고 생각되면,
