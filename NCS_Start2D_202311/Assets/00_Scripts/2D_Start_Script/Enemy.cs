@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour,IHit
 {
-    public Slider slider;
+    public Slider slider;//피UI
+    //Image img; //slider 대신 이미지 사용도 가능
+    ////img.fillAmount = stat.HP / stat.MaxHP;  //img사용시 피통의 표현은 이렇게 해야함..
     Rigidbody2D rigid;
     Animator anim;
     bool IsMove = false;
@@ -19,7 +21,7 @@ public class Enemy : MonoBehaviour,IHit
     public Constructure.Stat stat;
 
     void Start()
-    {
+    {               
         rigid = GetComponent<Rigidbody2D>();
         stat = new Constructure.Stat(100,10);
         childTr = transform.GetChild(0);
@@ -65,8 +67,7 @@ public class Enemy : MonoBehaviour,IHit
         }
     }
     public void Hit(float damage, Vector3 dir)
-    {
-        Debug.Log("적HP : " + this.stat.HP);
+    {        
         if (stat.HP <= 0)
         {
             return;
