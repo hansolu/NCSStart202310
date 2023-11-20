@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     List<GameObject> allFoodList = new List<GameObject>(); //큐ㅜ밖에있는 애들을 여기 담아야할것...
     Coroutine fooddroppin = null;
     void Start()
-    {
+    {                
         scoreText.text = "";
         //먼저 오브젝트 풀에 내가 쓸 최대 객체들을 만들어둘것임...
         //젤리 하나가 태어나서 땅에 떨어져 죽을떄까지
@@ -63,7 +63,13 @@ public class GameManager : MonoBehaviour
         //해당 오브젝트 풀의 내용들을 모두 꺼둠. (setactive(false)) 
         for (int i = 0; i < 20; i++)
         {
-            tmpobj = Instantiate(foodPrefab, this.transform.GetChild(0));            
+            tmpobj = Instantiate(foodPrefab, this.transform.GetChild(0));
+            //tmpobj.transform.position = 위치;
+            //tmpobj.transform.rotation = 회전값;
+
+            //위의 세줄의 경우보다 밑의 한줄이 훨씬 가볍고 빠르다.
+            //tmpobj = Instantiate(foodPrefab, Vector3.zero, Quaternion.identity, this.transform.GetChild(0));
+
             objectPool.Enqueue(tmpobj.GetComponent<Food>());
             tmpobj.SetActive(false);
             allFoodList.Add(tmpobj);

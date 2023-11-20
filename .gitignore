@@ -70,4 +70,7 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
-
+NCS_Start2D_202311/[Aa]ssets/Joystick Pack/
+NCS_Start2D_202311/[Aa]ssets/Joystick Pack.meta
+NCS_Start2D_202311/[Aa]ssets/Samples/
+NCS_Start2D_202311/[Aa]ssets/Samples.meta
