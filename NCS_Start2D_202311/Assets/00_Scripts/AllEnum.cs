@@ -25,4 +25,14 @@ public class AllEnum //Enum만 담아두는 클래스...밖에서 Enum접근을 원활하게 하기 
 
         End
     }
+
+    public enum SceneKind
+    { 
+        Game,
+        Second,
+        
+        Load,
+
+        End
+    }
 }

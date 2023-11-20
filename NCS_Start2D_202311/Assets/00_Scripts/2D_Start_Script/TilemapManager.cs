@@ -24,31 +24,31 @@ public class TilemapManager : Singleton<TilemapManager>
     Dictionary<Vector3Int, TileInfo> tilesinfo = new Dictionary<Vector3Int, TileInfo>();
 
 
-    protected override void Awake()
-    {
-        base.Awake();
-
-        foreach (var item in tilemap.cellBounds.allPositionsWithin)
-        {
-            if (tilemap.HasTile(item))
-            {
-                var tile = tilemap.GetTile<TileBase>(item);
-                if (tile == /*내가 지정한 얼음타일*/tiles[(int)AllEnum.TileKind.ICE])
-                {
-                    tilesinfo.Add(item, new TileInfo(AllEnum.TileKind.ICE, 2));
-                }
-                else if(tile == /*내가 지정한 진흙타일*/tiles[(int)AllEnum.TileKind.MUD])
-                {
-                    tilesinfo.Add(item, new TileInfo(AllEnum.TileKind.MUD, 2));
-                }
+    //데이터 세팅 예시
+    //protected override void Awake()
+    //{
+    //    base.Awake();                
+        //foreach (var item in tilemap.cellBounds.allPositionsWithin)
+        //{
+        //    if (tilemap.HasTile(item))
+        //    {
+        //        var tile = tilemap.GetTile<TileBase>(item);
+        //        if (tile == /*내가 지정한 얼음타일*/tiles[(int)AllEnum.TileKind.ICE])
+        //        {
+        //            tilesinfo.Add(item, new TileInfo(AllEnum.TileKind.ICE, 2));
+        //        }
+        //        else if(tile == /*내가 지정한 진흙타일*/tiles[(int)AllEnum.TileKind.MUD])
+        //        {
+        //            tilesinfo.Add(item, new TileInfo(AllEnum.TileKind.MUD, 2));
+        //        }
                 
-            }
-            else
-            {
+        //    }
+        //    else
+        //    {
                 
-            }
-        }
-    }
+        //    }
+        //}
+    //}
 
     public float GetTileSpeed(Vector3 _pos)
     {

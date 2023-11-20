@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
+
+    public Player player;
+
     public Transform[] posRange; //푸드가 만들어질 범위 트랜스폼..
     public Text scoreText; //점수 출력용
     public GameObject foodPrefab; //푸드 원본...
@@ -46,7 +50,9 @@ public class GameManager : MonoBehaviour
 
     //오브젝트풀 용 변수선언.    
     Queue<Food> objectPool = new Queue<Food>();
-
+    //List,  만들어서  밖에있는 음식 관리..
+    List<GameObject> allFoodList = new List<GameObject>(); //큐ㅜ밖에있는 애들을 여기 담아야할것...
+    Coroutine fooddroppin = null;
     void Start()
     {
         scoreText.text = "";
@@ -60,9 +66,58 @@ public class GameManager : MonoBehaviour
             tmpobj = Instantiate(foodPrefab, this.transform.GetChild(0));            
             objectPool.Enqueue(tmpobj.GetComponent<Food>());
             tmpobj.SetActive(false);
+            allFoodList.Add(tmpobj);
         }
 
-        StartCoroutine(GenerateFood());
+        fooddroppin = StartCoroutine(GenerateFood());
+    }
+
+    public void ControlCoroutine(bool isstart)
+    {
+        if (isstart)
+        {
+            ActivePlayer(true); //플레이어 활성화.
+            if (fooddroppin == null)
+            {
+                fooddroppin = StartCoroutine(GenerateFood());
+            }            
+        }
+        else
+        {
+            StopCoroutine(fooddroppin); //음식떨구던 코루틴도 멈추고
+            fooddroppin = null;
+
+            for (int i = 0; i < allFoodList.Count; i++) //모든 음식들 비활성화
+            {
+                allFoodList[i].SetActive(false);
+                
+            }
+
+            ActivePlayer(false); //플레이어 비활성화.
+        }        
+    }
+
+    public void ActivePlayer(bool ison)
+    {
+        player.gameObject.SetActive(ison);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            //SceneManager.LoadScene("Scenes/SecondScene");
+            //SceneManager.LoadScene("SecondScene"); //그냥 씬만 넘기면 넘길수있음                        
+            //SceneManager.LoadScene(1);
+            SceneLoadManager.Instance.ChangeScene(AllEnum.SceneKind.Second);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            //SceneManager.LoadScene("Scenes/2D_Start");
+            //SceneManager.LoadScene("2D_Start");
+            //SceneManager.LoadScene(0);
+            SceneLoadManager.Instance.ChangeScene(AllEnum.SceneKind.Game);
+        }
     }
 
     public Food GetFoodFromPool()
@@ -73,7 +128,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            return Instantiate(foodPrefab).GetComponent<Food>();
+            tmpobj = Instantiate(foodPrefab);
+            allFoodList.Add(tmpobj);
+            return tmpobj.GetComponent<Food>();
         }
     }
 

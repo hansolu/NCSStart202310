@@ -41,7 +41,7 @@ public class Player : MonoBehaviour, IHit
         //Horizontal == 가로값
         //Vertical == 세로값
 
-        x = Input.GetAxisRaw("Horizontal"); //가로값
+        x = Input.GetAxisRaw("Horizontal"); //가로값//왼쪽이 눌리면 -1, 아무것도 안누르면 0, 오른키 누르면 1
         //y = Input.GetAxisRaw("Vertical"); //가로값        
 
         vec.x = x;
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour, IHit
         //1번 스케일 반대로 하는법 //스케일 반대로 하는 게 베스트...
         if (vec.x != 0)//뭔가 내가 움직이고 있는 상태
         {
-            scaleVec.x = vec.x;
+            scaleVec.x = vec.x; //-1 이랑 1
             anim.SetBool("IsMove", true);
         }
         else //vex.x == x == 0 아무 입력이 없는 상태.
@@ -70,7 +70,7 @@ public class Player : MonoBehaviour, IHit
         }
         //anim.SetFloat("해당 float형 변수이름", 실수);
         //anim.SetInteger("해당 int형 변수이름", 정수);
-        transform.localScale = scaleVec; //1,1,1 // -1,1,1
+        transform.localScale = scaleVec; //1,1,1 오른쪽을 볼때 사람 스케일 // -1,1,1 왼쪽을 볼때의 사람스케일
 
 
         ////2번은 스프라이트렌더러를 뒤집는 법. //이방법을 쓰면, 콜라이더는 안뒤집히고 그자리에 가만히 있기때문.
@@ -129,9 +129,12 @@ public class Player : MonoBehaviour, IHit
             //anim.SetTrigger("Jump2");
         }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z))// 하여간 z키를 누르면 할 작업...
         {            
-            TilemapManager.Instance.SetTile(transform.position + Vector3.right * scaleVec.x, AllEnum.TileKind.Coin_Bronze);
+            TilemapManager.Instance.SetTile(transform.position + 
+                Vector3.right * scaleVec.x,  //왼쪽을 보면 (1,0,0) * -1 == (-1,0,0)
+                
+                AllEnum.TileKind.Coin_Bronze);
         }
         else if (Input.GetKeyDown(KeyCode.X))
         {
