@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IHit
 {
+    public Camera cam;
     float x = 0;
     //float y = 0;
     float speed = 5;    
@@ -16,9 +17,22 @@ public class Player : MonoBehaviour, IHit
     bool isHit = false;
     SpriteRenderer sprend;
     Animator anim;
+
+    
     
     Constructure.Stat mystat;
 
+    #region 공격용 추가
+
+    public Camera camera;
+    Vector2 attackPos = Vector2.zero;
+    Vector2 lookdir = Vector2.zero;
+    float angle = 0;
+    public Transform weaponTr;
+        
+    int layermask = 0;
+    public LayerMask selectLayer;
+    #endregion
 
     void Start()
     {
@@ -26,6 +40,11 @@ public class Player : MonoBehaviour, IHit
         rigid = transform.GetComponent<Rigidbody2D>();        
         sprend = transform.GetComponent<SpriteRenderer>();
         anim = transform.GetComponent<Animator>();
+    
+        //~selectLayer //선택한 레이어 제외한 모두..
+        layermask = 1 << LayerMask.NameToLayer("Enemy") /*| 1 << LayerMask.NameToLayer("Enemy2")*/;
+        ////만약 해당 layermask만 제외한 나머지 레이어들
+        //~layermask
     }
 
     void Update() 
@@ -142,7 +161,102 @@ public class Player : MonoBehaviour, IHit
             //TilemapManager.Instance.SwapTile(
             //    TilemapManager.Instance.GetTile( transform.position + Vector3.right * scaleVec.x), null);
         }
+
+
+        attackPos = camera.ScreenToWorldPoint(Input.mousePosition); //내가 마우스 클릭한 위치를 월드 포지션으로 바꿈
+        RotateWeapon();
+        if (Input.GetMouseButtonDown(0)) //마우스왼쪽클릭
+        {
+            //camera.ScreenPointToRay(/*어떤점*/); //카메라의 스크린상에 어떤 점을 레이 (광선)으로 쏘겠다. 
+            ////우리는 2d카메라 == orthographic이고 이거는 직영 이라서 z값이 상관없는 상태
+            //camera.ScreenToWorldPoint(/*어떤점*/); //어떤점을 월드포인트로 변경하겠음. 월드 포지션...  화면상의 x,y값으로 바꾸겠다.
+
+            //쿨타임이 덜찼으면 돌아가기
+            //공격하기
+            
+            //distance로 비교해도되겠지만.. 
+            if (Vector2.Distance(attackPos, transform.position) <= 2) //이건 둥근 경계
+            {
+                Debug.Log("공격");
+            }
+
+            ////이거는 사각경계
+            //if (attackPos.x <= transform.position.x + 1 
+            //    && attackPos.x >= transform.position.x - 1
+            //    && attackPos.y <= transform.position.y + 1
+            //    && attackPos.y >= transform.position.y - 1)
+            //{                
+            //}
+
+            //레이캐스트
+
+            //hits =Physics2D.Raycast(/*레이의 시작점*//*tranform.position 나의 위치. 이걸쓰면 대체적으로 나의 발밑에서 레이가 나갈것이기 때문에*/ 
+            //    weaponTr.position, /*방향벡터*/ attackPos /*, 거리 주기 가능. 거리를 지정안하면 float.MaxValue  혹은 Mathf.Infinity 무한과 같음, 레이어마스크 */ );
+
+            //RaycastHit2D hits = Physics2D.Raycast(weaponTr.position, attackPos, 2, layermask);
+            ////구조체로 애초에 결과값을 받는 방법과
+            //if (hits.collider !=null) //존재하고있음
+            //{
+            //    //hits.transform.GetComponent<IHit>().Hit();
+            //    //Instantiate(이펙트 프리팹, hits.point, Quaternion.identity);//피격이펙트 생성
+            //    //if (hits.rigidbody != null)
+            //    //    hits.rigidbody.AddForce(attackPos * /*힘*/10);
+            //}         
+
+            //Physics2D.BoxCast 
+            //Physics2D.CapsuleCast(weaponTr.position, 5/*반지름*/,캡슐을 세로로할건지 가로로할건지.. );
+            //Physics2D.CircleCast
+            //Physics2D.Linecast
+
+            //==================== ~Cast 라인은 방향벡터로 쏘아냄. 그리고 RaycastHit2D 구조체를 반환함. 먼저 닿는걸 반환하고, All~함수를 써야 여러개 다됨
+            //==============   overlap~ 라인은 해당 지점에 콕 하고 찍음. 그리고 Collider2D를 반환함.
+
+            //Physics2D.OverlapArea //직사각형
+            //Physics2D.OverlapBox //정사각형
+            //Physics2D.OverlapCapsule //캡슐형            
+            //Physics2D.OverlapPoint //지점 점
+
+            //Physics2D.OverlapCircle => All을 안붙이면 하나만 주긴하는데, 그게 내가 원하는 대상일지아닐지는 알수가 없음.. 
+            //그래서 만약 해당 지점에서 나와 가장 가까운 하나를 추리고 싶다면
+
+            Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, 5, layermask); //원형
+            float neardist = Mathf.Infinity;
+            int index = -1;
+
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (Vector2.Distance( cols[i].transform.position, transform.position) < neardist)
+                {
+                    neardist = Vector2.Distance(cols[i].transform.position, transform.position);
+                    index = i;
+                }
+            }
+            //cols[index]  나랑 가장 가까운 대상/*콜라이더*/이 됨....                        
+        }
     }
+
+    //void OnDrawGizmos() //기본적으로 계속 내가 에디터를 플레이 안하고 있어도
+    //                    //계속 돌아가는, 기즈모를 그리는 함수
+    //{
+        //if (~~~한경우에 )
+        //{
+            //    Gizmos.DrawSphere(transform.position - Vector3.right, 2);
+            //    Gizmos.DrawWireSphere(transform.position + Vector3.right, 2);
+        //}
+    //}
+    //void OnDrawGizmosSelected() //에디터를 활성화 해서 해당 객체를 누르면, 
+    //    //그때부터 객체 선택 해제할때까지 계속 불리는 함수
+    //{        
+    //    Gizmos.DrawRay(transform.position, Vector2.up * 100);        
+    //}
+
+    void RotateWeapon()
+    {
+        lookdir = attackPos - (Vector2)transform.position; //내가  attackpos를 바라보는 방향벡터가 나옴.
+         angle =Mathf.Atan2(lookdir.y, lookdir.x) * Mathf.Rad2Deg;
+        weaponTr.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+    }
+
 
     public void Hit(float damage, Vector3 dir) 
     {        
