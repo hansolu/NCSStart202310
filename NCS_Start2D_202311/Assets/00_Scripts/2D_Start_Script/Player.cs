@@ -36,8 +36,10 @@ public class Player : MonoBehaviour, IHit
 
     #region 이펙터
     PlatformEffector2D effector2d=null;
-    //BoxCollider2D jumpGround = null;
-    ///*Collider2D*/CapsuleCollider2D mycollider;
+    [SerializeField]
+    Collider2D jumpGround = null;
+    [SerializeField]
+    Collider2D mycollider;
     #endregion
 
     void Start()
@@ -46,7 +48,7 @@ public class Player : MonoBehaviour, IHit
         rigid = transform.GetComponent<Rigidbody2D>();        
         sprend = transform.GetComponent<SpriteRenderer>();
         anim = transform.GetComponent<Animator>();
-        //mycollider = transform.GetComponent<CapsuleCollider2D>();
+        mycollider = transform.GetComponent<Collider2D>();
     
         //~selectLayer //선택한 레이어 제외한 모두..
         layermask = 1 << LayerMask.NameToLayer("Enemy") /*| 1 << LayerMask.NameToLayer("Enemy2")*/;
@@ -242,14 +244,17 @@ public class Player : MonoBehaviour, IHit
         }
 
         if ( /*Input.GetAxisRaw("Vertical")==-1*/ Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if (effector2d!=null)
-            {
-                effector2d.rotationalOffset = 180;
+        {                       
+            //physics2d.Ignore쓰는 방법
+            if (jumpGround!=null)
+            {                
+                Physics2D.IgnoreCollision(mycollider, jumpGround,true); //내 콜라이더와 점프그라운드 콜라이더의 충돌을 무시함.
             }
-            //if (jumpGround!=null)
-            //{                
-            //    Physics2D.IgnoreCollision(mycollider, jumpGround,true); //내 콜라이더와 점프그라운드 콜라이더의 충돌을 무시함.
+            
+            //이펙터를 수정하는 방법
+            //if (effector2d!=null)
+            //{
+            //    effector2d.rotationalOffset = 180; //이펙터의 영향을 반대로 바꿈
             //}
         }
     }
@@ -397,9 +402,9 @@ public class Player : MonoBehaviour, IHit
             }
         }
         else if (collision.gameObject.CompareTag("JumpGround")) //내가 점프그라운드 위면....
-        {
-            //jumpGround = collision.transform.GetComponent<BoxCollider2D>();
-            effector2d = collision.transform.GetComponent<PlatformEffector2D>();
+        {            
+            jumpGround = collision.transform.GetComponent<Collider2D>();//물리 콜라이더 무시하는 방법
+            //effector2d = collision.transform.GetComponent<PlatformEffector2D>();//플랫폼이펙터의 영향력을 수정하는 방법
         }
     }
 
@@ -409,14 +414,21 @@ public class Player : MonoBehaviour, IHit
         //Debug.Log("그냥 콜리젼 접촉 해제");
         if (collision.gameObject.CompareTag("JumpGround")) //내가 점프그라운드 위면....
         {
-            //Physics2D.IgnoreCollision(mycollider, jumpGround, false); //다시 점프체와 나와의 "충돌 무시"를 해제하겠다.
-            //jumpGround = null;
-            if (effector2d != null)
-            { 
-            effector2d.rotationalOffset = 0;
-            effector2d = null;
-            }
+            //이거는 두 충돌체간의 무시를 이용한 방법
+            Invoke("SetJumpGroundNull",0.5f);
+
+            ////이펙터를 수정하는 방법
+            //if (effector2d != null)
+            //{
+            //    effector2d.rotationalOffset = 0;
+            //    effector2d = null;
+            //}
         }
+    }
+    void SetJumpGroundNull()
+    {        
+        Physics2D.IgnoreCollision(mycollider, jumpGround, false); //다시 점프체와 나와의 "충돌 무시"를 해제하겠다.
+        jumpGround = null;                 
     }
     //void OnCollisionStay2D(Collision2D collision)
     //{
