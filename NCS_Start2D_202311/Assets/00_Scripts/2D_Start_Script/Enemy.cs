@@ -39,22 +39,23 @@ public class Enemy : MonoBehaviour,IHit
     {
         while (true)
         {
-            IsMove = true;
-            anim.SetBool("IsMove", IsMove);
+            IsMove = true; //움직임 여부
+            anim.SetBool("IsMove", IsMove); 
             yield return new WaitForSeconds( Random.Range (1f,3f));
-            IsMove = false; 
+            IsMove = false;  
             anim.SetBool("IsMove", IsMove);
-            IsLeft = Random.Range(0, 2) == 0 ? true : false;
+            IsLeft = Random.Range(0, 2) == 0 ? true : false; //방향성 부여
             yield return new WaitForSeconds(Random.Range(0.5f, 1f));
         }
     }
+
     void FixedUpdate()
     {
-        if (IsMove)
+        if (IsMove) //내가 움직여야하는 상태면
         {
-            scale.x = (IsLeft ? 1 : -1);
+            scale.x = (IsLeft ? 1 : -1); //방향성에 다라 스케일 설정
             childTr.localScale = scale;
-            transform.Translate(vec * (IsLeft ? -1: 1));
+            transform.Translate(vec * (IsLeft ? -1: 1)); //vec기본 Vector2.right
 
             if (transform.position.x <= GameManager.Instance.posRange[0].position.x)
             {
