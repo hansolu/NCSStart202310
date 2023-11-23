@@ -7,7 +7,7 @@ public class Player : MonoBehaviour, IHit
     public Camera cam;
     float x = 0;
     //float y = 0;
-    float speed = 5;    
+    float speed = 8;    
     Rigidbody2D rigid;
     int jumpCount = 0;    
     Vector3 vec = Vector3.zero; //vec == 0,0,0
@@ -34,12 +34,19 @@ public class Player : MonoBehaviour, IHit
     public LayerMask selectLayer;
     #endregion
 
+    #region 이펙터
+    PlatformEffector2D effector2d=null;
+    //BoxCollider2D jumpGround = null;
+    ///*Collider2D*/CapsuleCollider2D mycollider;
+    #endregion
+
     void Start()
     {
         mystat = new Constructure.Stat(100, 10);
         rigid = transform.GetComponent<Rigidbody2D>();        
         sprend = transform.GetComponent<SpriteRenderer>();
         anim = transform.GetComponent<Animator>();
+        //mycollider = transform.GetComponent<CapsuleCollider2D>();
     
         //~selectLayer //선택한 레이어 제외한 모두..
         layermask = 1 << LayerMask.NameToLayer("Enemy") /*| 1 << LayerMask.NameToLayer("Enemy2")*/;
@@ -233,8 +240,21 @@ public class Player : MonoBehaviour, IHit
             }
             //cols[index]  나랑 가장 가까운 대상/*콜라이더*/이 됨....                        
         }
+
+        if ( /*Input.GetAxisRaw("Vertical")==-1*/ Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            if (effector2d!=null)
+            {
+                effector2d.rotationalOffset = 180;
+            }
+            //if (jumpGround!=null)
+            //{                
+            //    Physics2D.IgnoreCollision(mycollider, jumpGround,true); //내 콜라이더와 점프그라운드 콜라이더의 충돌을 무시함.
+            //}
+        }
     }
 
+    
     //void OnDrawGizmos() //기본적으로 계속 내가 에디터를 플레이 안하고 있어도
     //                    //계속 돌아가는, 기즈모를 그리는 함수
     //{
@@ -376,12 +396,28 @@ public class Player : MonoBehaviour, IHit
                 Hit(collision.transform.GetComponent<IHit>().GetAtt(), direction);                
             }
         }
+        else if (collision.gameObject.CompareTag("JumpGround")) //내가 점프그라운드 위면....
+        {
+            //jumpGround = collision.transform.GetComponent<BoxCollider2D>();
+            effector2d = collision.transform.GetComponent<PlatformEffector2D>();
+        }
     }
 
-    //void OnCollisionExit2D(Collision2D collision)
-    //{
-    //    Debug.Log("그냥 콜리젼 접촉 해제");
-    //}
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        //Debug.Log("그냥 콜리젼 접촉 해제");
+        if (collision.gameObject.CompareTag("JumpGround")) //내가 점프그라운드 위면....
+        {
+            //Physics2D.IgnoreCollision(mycollider, jumpGround, false); //다시 점프체와 나와의 "충돌 무시"를 해제하겠다.
+            //jumpGround = null;
+            if (effector2d != null)
+            { 
+            effector2d.rotationalOffset = 0;
+            effector2d = null;
+            }
+        }
+    }
     //void OnCollisionStay2D(Collision2D collision)
     //{
     //    Debug.Log("그냥 콜리젼 접촉 중");
