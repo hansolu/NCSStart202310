@@ -7,6 +7,12 @@ public class Scene_Game : BaseScene
     void Start()
     {
         SceneLoadManager.Instance.SetLoadInfo(this);
+
+        //사운드 BGM이용
+        //SoundManager.Instance.SetSoundBGM(게임BGM번호, 
+        //    항상 들리길 바란다면 카메라 밑에 아예 달면되고,
+        //    게임 구역별로 다르길 바란다면, 해당 구역의 중심에 자리시키면 됨.
+        //    );
     }
     public override void ClearScene()
     {

@@ -78,6 +78,9 @@ public class Enemy : MonoBehaviour,IHit
         slider.value = this.stat.HP;
         anim.SetTrigger("Hit");
         rigid.AddForce(dir, ForceMode2D.Impulse);
+
+        //사운드 호출 샘플
+        //SoundManager.Instance.SetSoundEffect(/*내가 피격당하는 소리 번호*/, transform.position);
     }
     public float GetAtt()
     {
